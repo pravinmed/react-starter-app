@@ -1,5 +1,5 @@
 import React from 'react'
-// import * as BooksAPI from './BooksAPI'
+ import * as BooksAPI from './BooksAPI'
 import './App.css'
 
 class BooksApp extends React.Component {
@@ -10,11 +10,54 @@ class BooksApp extends React.Component {
      * users can use the browser's back and forward buttons to navigate between
      * pages, as well as provide a good URL they can bookmark and share.
      */
-    showSearchPage: false
+    showSearchPage: false,
+    query : '',
+    urlState: '',
+    readBooks : [],
+    reading : [],
+    wanting  : [],
+    allBooks : []
+    
   }
 
+  componentDidMount() 
+  {
+    BooksAPI.getAll()
+      .then((allBooks)=> { 
+      this.setState(() => ({allBooks}))
+    });
+  }
+
+updateQuery = (query) =>
+{
+  this.setState( () => ({query : query.trim() }))
+}
+
+ handleChange = (e) => 
+ {
+    e.preventDefault();
+    if (e.target.value === 'currentlyReading')
+    {
+        //this.setState()
+    } else if (e.target.value === 'read')
+    {
+
+    } else if (e.target.value === 'wantToRead')
+    {
+
+    } 
+ }
+
   render() {
-    return (
+    const {query} = this.state;
+    const {allBooks} = this.state;
+   
+    const showingBooks = query === '' ? allBooks : allBooks.
+      filter((b) => {b.title
+      .toLowerCase().includes(query.toLowerCase()) || 
+      b.authors.filter((auth) => {auth.toLowerCase().includes(query.toLocaleLowerCase())})});
+   
+      return (
       <div className="app">
         {this.state.showSearchPage ? (
           <div className="search-books">
@@ -29,8 +72,31 @@ class BooksApp extends React.Component {
                   However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                   you don't find a specific author or title. Every search is limited by search terms.
                 */}
-                <input type="text" placeholder="Search by title or author"/>
-
+                <input type="text" placeholder="Search by title or author" 
+                value = {query} 
+                onChange = {(event) => this.updateQuery(event.target.value)} />
+                <div className='list-books-content'> 
+                  Showing Books 
+                  <div className='bookshelf-books'>
+                  <ol className='books-grid'>
+                   {showingBooks.map((book) => 
+                    (<li key={book.id} className='books-grid'>
+                     <div className='books-grid'>
+                         {console.log(book.title)}
+                         <div className='book-title'> 
+                         <h1 className='list-books-title'>
+                         {book.tittle} </h1> 
+                         </div> 
+                         <div className='book-authors'>{book.authors}</div>
+                   
+                         <div className='book-cover'  style={{backgroundImage: `url(${book.previewLink})`
+                           }}>
+                         </div>
+                     </div>
+                   </li>))}
+                 </ol>
+                 </div>
+                </div>
               </div>
             </div>
             <div className="search-books-results">
@@ -53,7 +119,7 @@ class BooksApp extends React.Component {
                           <div className="book-top">
                             <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: 'url("http://books.google.com/books/content?id=PGR2AwAAQBAJ&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE73-GnPVEyb7MOCxDzOYF1PTQRuf6nCss9LMNOSWBpxBrz8Pm2_mFtWMMg_Y1dx92HT7cUoQBeSWjs3oEztBVhUeDFQX6-tWlWz1-feexS0mlJPjotcwFqAg6hBYDXuK_bkyHD-y&source=gbs_api")' }}></div>
                             <div className="book-shelf-changer">
-                              <select>
+                              <select onChange = {this.handleChange}>
                                 <option value="move" disabled>Move to...</option>
                                 <option value="currentlyReading">Currently Reading</option>
                                 <option value="wantToRead">Want to Read</option>
