@@ -30,7 +30,7 @@ class BooksApp extends React.Component {
 
 updateQuery = (query) =>
 {
-  this.setState( () => ({query : query.trim() }))
+  this.setState( () => ({query : query }))
 }
 
  handleChange = (e) => 
@@ -51,12 +51,23 @@ updateQuery = (query) =>
   render() {
     const {query} = this.state;
     const {allBooks} = this.state;
-   
-    const showingBooks = query === '' ? allBooks : allBooks.
-      filter((b) => {b.title
-      .toLowerCase().includes(query.toLowerCase()) || 
-      b.authors.filter((auth) => {auth.toLowerCase().includes(query.toLocaleLowerCase())})});
-   
+    console.log(allBooks);
+    console.log(query);
+    const fbyAuthor =  allBooks.filter((b) => (b.authors.filter((auth) => (
+    
+      auth.toLowerCase().includes(query.toLowerCase())))))
+      console.log(" By Author ")
+      console.log(fbyAuthor);
+    const showingBooks = query === '' ? allBooks : allBooks.filter((b) => ( 
+    
+      b.title.toLowerCase().includes(query.toLowerCase())))
+       /* || 
+      (b.authors.filter((auth) => (
+    
+        auth.toLowerCase().includes(query.toLowerCase())))))*/
+     
+      console.log(" Filtered list ");
+       console.log(showingBooks);
       return (
       <div className="app">
         {this.state.showSearchPage ? (
@@ -81,18 +92,26 @@ updateQuery = (query) =>
                   <ol className='books-grid'>
                    {showingBooks.map((book) => 
                     (<li key={book.id} className='books-grid'>
-                     <div className='books-grid'>
-                         {console.log(book.title)}
-                         <div className='book-title'> 
-                         <h1 className='list-books-title'>
-                         {book.tittle} </h1> 
-                         </div> 
-                         <div className='book-authors'>{book.authors}</div>
-                   
-                         <div className='book-cover'  style={{backgroundImage: `url(${book.previewLink})`
-                           }}>
+                      <div className='book'>
+                        <div className='book-cover'  style={ {width:128 ,height:128, backgroundImage: `url(${book.imageLinks.smallThumbnail})`}}>
+                          <div className="book-shelf-changer">
+                              <select onChange = {this.handleChange}>
+                                <option value="move" disabled>Move to...</option>
+                                <option value="currentlyReading">Currently Reading</option>
+                                <option value="wantToRead">Want to Read</option>
+                                <option value="read">Read</option>
+                                <option value="none">None</option>
+                              </select>
+                            </div>
                          </div>
+                     
+                        <div className='book-title'> 
+                         <h1 className='list-books-title'>
+                         {book.title} </h1> 
+                        </div> 
+                          <div className='book-authors'>{book.authors}</div>
                      </div>
+                         
                    </li>))}
                  </ol>
                  </div>
